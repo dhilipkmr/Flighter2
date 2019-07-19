@@ -54,42 +54,6 @@ describe('Flighter app \n', function() {
       );
   });
 
-  it('should have visible input elements and Add button', async function() {
-    let display, message;
-    display = await name.getCssValue('display');
-    expect(display).to.equal('inline-block');
-    name.sendKeys('Spicejet');
-    messageDisplay = await name.getAttribute('value');
-    expect(messageDisplay).to.equal('Spicejet');
-
-    display = await origin.getCssValue('display');
-    expect(display).to.equal('inline-block');
-    origin.sendKeys('Bangalore');
-    messageDisplay = await origin.getAttribute('value');
-    expect(messageDisplay).to.equal('Bangalore');
-
-    display = await destination.getCssValue('display');
-    expect(display).to.equal('inline-block');
-    destination.sendKeys('Delhi');
-    messageDisplay = await destination.getAttribute('value');
-    expect(messageDisplay).to.equal('Delhi');
-
-    display = await price.getCssValue('display');
-    expect(display).to.equal('inline-block');
-    price.sendKeys('1000');
-    messageDisplay = await price.getAttribute('value');
-    expect(messageDisplay).to.equal('1000');
-
-    display = await rating.getCssValue('display');
-    expect(display).to.equal('inline-block');
-    rating.sendKeys('4');
-    messageDisplay = await rating.getAttribute('value');
-    expect(messageDisplay).to.equal('4');
-
-    display = await addBtn.getCssValue('display');
-    expect(display).to.equal('inline-block');
-  });
-
   it('should add the flight card on clicking `Add` button', async function() {
     name.sendKeys('Spicejet');
     origin.sendKeys('Bangalore');
@@ -97,14 +61,14 @@ describe('Flighter app \n', function() {
     price.sendKeys('1000');
     rating.sendKeys('4');
     await addBtn.click();
-    const nameVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul li')[0].innerText");
+    const nameVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul')[2].children[0].innerText");
     expect(nameVal).to.contain('Flight Name');
     expect(nameVal).to.contain('Spicejet');
-    const originDestVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul li')[1].innerText");
+    const originDestVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul')[2].children[1].innerText");
     expect(originDestVal).to.contain('Bangalore to Delhi');
-    const priceVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul li')[2].innerText");
+    const priceVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul')[2].children[2].innerText");
     expect(priceVal).to.contain('4*');
-    const ratingVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul li')[3].innerText");
+    const ratingVal = await driver.executeScript("return document.querySelectorAll('#flightItems ul')[2].children[3].innerText");
     expect(ratingVal).to.contain('1000');
   });
 
@@ -115,7 +79,7 @@ describe('Flighter app \n', function() {
     price.sendKeys('');
     rating.sendKeys('');
     await addBtn.click();
-    const hasNoItem = await driver.executeScript("return document.querySelectorAll('#flightItems ul').length === 0");
+    const hasNoItem = await driver.executeScript("return document.querySelectorAll('#flightItems ul').length === 2");
     expect(hasNoItem).to.be.true;
   });
 
@@ -140,72 +104,44 @@ describe('Flighter app \n', function() {
   });
   
   it('should allow to sort by price', async function() {
-    name.sendKeys('Spicejet');
-    origin.sendKeys('Bangalore');
-    destination.sendKeys('Delhi');
-    price.sendKeys('1000');
-    rating.sendKeys('4');
-    await addBtn.click();
-
-    name.sendKeys('AirIndia');
-    origin.sendKeys('Chennai');
-    destination.sendKeys('Bombay');
-    price.sendKeys('2000');
-    rating.sendKeys('5');
-    await addBtn.click();
-
-    name.sendKeys('Indiogo');
-    origin.sendKeys('Goa');
+    name.sendKeys('Indigo');
+    origin.sendKeys('Manali');
     destination.sendKeys('Bali');
-    price.sendKeys('3000');
+    price.sendKeys('5000');
     rating.sendKeys('1');
     await addBtn.click();
 
-    // Ascending
-    await sortPrice.click();
-    const priceElt1 = "document.querySelectorAll('#flightItems ul')[0].children[3].innerText";
-    const priceElt2 = "document.querySelectorAll('#flightItems ul')[1].children[3].innerText";
-    const priceElt3 = "document.querySelectorAll('#flightItems ul')[2].children[3].innerText";
-    let price1 = await driver.executeScript(`return ${priceElt1}`);
-    expect(price1).to.contain('1000');
-    let price2 = await driver.executeScript(`return ${priceElt2}`);
-    expect(price2).to.contain('2000');
-    let price3 = await driver.executeScript(`return ${priceElt3}`);
-    expect(price3).to.contain('3000');
-    driver.takeScreenshot().then(
-      function(image, err) {
-          require('fs').writeFile('price-sorting-ascending.png', image, 'base64', function(err) {});
-      }
-    );
+   // Ascending
+   await sortPrice.click();
+   const priceElt1 = "document.querySelectorAll('#flightItems ul')[0].children[3].innerText";
+   const priceElt2 = "document.querySelectorAll('#flightItems ul')[1].children[3].innerText";
+   const priceElt3 = "document.querySelectorAll('#flightItems ul')[2].children[3].innerText";
+   let price1 = await driver.executeScript(`return ${priceElt1}`);
+   expect(price1).to.contain('3000');
+   let price2 = await driver.executeScript(`return ${priceElt2}`);
+   expect(price2).to.contain('4000');
+   let price3 = await driver.executeScript(`return ${priceElt3}`);
+   expect(price3).to.contain('5000');
+   driver.takeScreenshot().then(
+     function(image, err) {
+         require('fs').writeFile('price-sorting-ascending.png', image, 'base64', function(err) {});
+     }
+   );
 
-    await sortPrice.click();
-    price1 = await driver.executeScript(`return ${priceElt1}`);
-    expect(price1).to.contain('3000');
-    price2 = await driver.executeScript(`return ${priceElt2}`);
-    expect(price2).to.contain('2000');
-    price3 = await driver.executeScript(`return ${priceElt3}`);
-    expect(price3).to.contain('1000');
+   await sortPrice.click();
+   price1 = await driver.executeScript(`return ${priceElt1}`);
+   expect(price1).to.contain('5000');
+   price2 = await driver.executeScript(`return ${priceElt2}`);
+   expect(price2).to.contain('4000');
+   price3 = await driver.executeScript(`return ${priceElt3}`);
+   expect(price3).to.contain('3000');
   });
 
   it('should allow to sort by Rating', async function() {
-    name.sendKeys('Spicejet');
-    origin.sendKeys('Bangalore');
-    destination.sendKeys('Delhi');
-    price.sendKeys('1000');
-    rating.sendKeys('4');
-    await addBtn.click();
-
-    name.sendKeys('AirIndia');
-    origin.sendKeys('Chennai');
-    destination.sendKeys('Bombay');
-    price.sendKeys('2000');
-    rating.sendKeys('5');
-    await addBtn.click();
-
-    name.sendKeys('Indiogo');
-    origin.sendKeys('Goa');
+    name.sendKeys('Indigo');
+    origin.sendKeys('Manali');
     destination.sendKeys('Bali');
-    price.sendKeys('3000');
+    price.sendKeys('5000');
     rating.sendKeys('1');
     await addBtn.click();
 
@@ -217,15 +153,15 @@ describe('Flighter app \n', function() {
     let rating1 = await driver.executeScript(`return ${rating1Elt}`);
     expect(rating1).to.contain('1');
     let rating2 = await driver.executeScript(`return ${rating2Elt}`);
-    expect(rating2).to.contain('4');
+    expect(rating2).to.contain('2');
     let rating3 = await driver.executeScript(`return ${rating3Elt}`);
-    expect(rating3).to.contain('5');
+    expect(rating3).to.contain('3');
     
     await sortRating.click();
     rating1 = await driver.executeScript(`return ${rating1Elt}`);
-    expect(rating1).to.contain('5');
+    expect(rating1).to.contain('3');
     rating2 = await driver.executeScript(`return ${rating2Elt}`);
-    expect(rating2).to.contain('4');
+    expect(rating2).to.contain('2');
     rating3 = await driver.executeScript(`return ${rating3Elt}`);
     expect(rating3).to.contain('1');
     driver.takeScreenshot().then(
@@ -236,12 +172,6 @@ describe('Flighter app \n', function() {
   });
 
   it('should change asc/desc text while Sorting based on Price and Rating', async function() {
-    name.sendKeys('Spicejet');
-    origin.sendKeys('Bangalore');
-    destination.sendKeys('Delhi');
-    price.sendKeys('1000');
-    rating.sendKeys('4');
-    await addBtn.click();
     // Ascending
     await sortPrice.click();
     let sortPriceElt = "document.querySelector('#sortPrice').innerText";
@@ -269,8 +199,7 @@ describe('Flighter app \n', function() {
 
   it('should have specified Bg colors in sorter heading and flights card', async function() {
     const jsGetSorterBg = "getComputedStyle(document.getElementById('sorter')).backgroundColor === 'rgb(222, 184, 135)'";
-    const jsGetCardBg = "getComputedStyle(document.querySelector('#flightItems ul')).backgroundColor === 'rgb(250, 235, 215)'";
-    const jsGetEasyAccessBg = "getComputedStyle(document.getElementById('easyAccess')).backgroundColor === 'rgb(95, 158, 160)'";
+    const jsGetCardBg = "getComputedStyle(document.querySelectorAll('#flightItems ul')[2]).backgroundColor === 'rgb(250, 235, 215)'";
 
     name.sendKeys('Spicejet');
     origin.sendKeys('Bangalore');
@@ -285,7 +214,7 @@ describe('Flighter app \n', function() {
     expect(bgColor).to.be.true;
   });
 
-  it('should have card layout for flights card', async function() {
+  it('should have correct border color for flights card', async function() {
     name.sendKeys('Spicejet');
     origin.sendKeys('Bangalore');
     destination.sendKeys('Delhi');
@@ -293,46 +222,12 @@ describe('Flighter app \n', function() {
     rating.sendKeys('4');
     await addBtn.click();
 
-    let jsGetBrderColor = 'getComputedStyle(document.querySelectorAll(".card")[0]).borderColor === "rgb(142, 82, 3)"';
-    let jshasBorder = 'getComputedStyle(document.querySelectorAll(".card")[0]).border.indexOf("none") === -1';
+    let jsGetBrderColor = 'getComputedStyle(document.querySelectorAll(".card")[2]).borderColor === "rgb(142, 82, 3)"';
+    let jshasBorder = 'getComputedStyle(document.querySelectorAll(".card")[2]).border.indexOf("none") === -1';
     let hasBorderandColor =  await driver.executeScript(`return ${jsGetBrderColor} && ${jshasBorder}`);
     expect(hasBorderandColor).to.be.true;
   });
 
-  it ('should have rounded corners for Sorter', async function() {
-    name.sendKeys('Spicejet');
-    origin.sendKeys('Bangalore');
-    destination.sendKeys('Delhi');
-    price.sendKeys('1000');
-    rating.sendKeys('4');
-    await addBtn.click();
-
-    let jsGetBrderRadius = 'getComputedStyle(document.querySelectorAll("#sorter")[0]).borderRadius !== "0px"';
-    let hasBorderRadius =  await driver.executeScript(`return ${jsGetBrderRadius}`);
-    expect(hasBorderRadius).to.be.true;
-  });
-
-  it ('should have the card at center', async function() {
-    name.sendKeys('Spicejet');
-    origin.sendKeys('Bangalore');
-    destination.sendKeys('Delhi');
-    price.sendKeys('1000');
-    rating.sendKeys('4');
-    await addBtn.click();
-    const hasSameDistance = await driver.executeScript(`return document.querySelectorAll(".card")[0].offsetLeft === (window.innerWidth - document.querySelectorAll(".card")[0].offsetLeft - document.querySelectorAll(".card")[0].offsetWidth)`);
-    expect(hasSameDistance).to.be.true;
-  });
-
-  it ('should have the sort Banner at center', async function() {
-    name.sendKeys('Spicejet');
-    origin.sendKeys('Bangalore');
-    destination.sendKeys('Delhi');
-    price.sendKeys('1000');
-    rating.sendKeys('4');
-    await addBtn.click();
-    const hasSameDistance = await driver.executeScript(`return document.querySelectorAll(".sort")[0].offsetLeft === (window.innerWidth - document.querySelectorAll(".sort")[0].offsetLeft - document.querySelectorAll(".sort")[0].offsetWidth)`);
-    expect(hasSameDistance).to.be.true;
-  });
 
   it ('should have the sort Banner and card starts and ends at same point vertically', async function() {
     name.sendKeys('Spicejet');
