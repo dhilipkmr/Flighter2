@@ -21,7 +21,7 @@ describe('Flighter app \n', function() {
           .forBrowser('chrome')
           .setChromeOptions(options)
           .build();
-      driver.get('http://localhost:7000')
+      driver.get('http://localhost:8000')
           .then(() => {
               done();
           });
@@ -45,15 +45,6 @@ describe('Flighter app \n', function() {
       flightItems = await driver.findElement(By.id("flightItems"));
   })
 
-  it('should test load the page', async function() {
-      let page = await driver.getPageSource();
-      driver.takeScreenshot().then(
-          function(image, err) {
-              require('fs').writeFile('initial-view.png', image, 'base64', function(err) {});
-          }
-      );
-  });
-
   it('should add the flight card on clicking `Add` button', async function() {
     name.sendKeys('Spicejet');
     origin.sendKeys('Bangalore');
@@ -72,7 +63,7 @@ describe('Flighter app \n', function() {
     expect(ratingVal).to.contain('1000');
   });
 
-  it('should not add when input fields are empty', async function() {
+  it('should show error when input fields are empty', async function() {
     name.sendKeys('');
     origin.sendKeys('');
     destination.sendKeys('');
@@ -80,7 +71,9 @@ describe('Flighter app \n', function() {
     rating.sendKeys('');
     await addBtn.click();
     const hasNoItem = await driver.executeScript("return document.querySelectorAll('#flightItems ul').length === 2");
+    const displayError = await driver.executeScript("return getComputedStyle(document.getElementsByClassName('error')[0]).display !== 'none'");
     expect(hasNoItem).to.be.true;
+    expect(displayError).to.be.true;
   });
 
   it('should reset after adding a flight item', async function() {
@@ -226,18 +219,6 @@ describe('Flighter app \n', function() {
     let jshasBorder = 'getComputedStyle(document.querySelectorAll(".card")[2]).border.indexOf("none") === -1';
     let hasBorderandColor =  await driver.executeScript(`return ${jsGetBrderColor} && ${jshasBorder}`);
     expect(hasBorderandColor).to.be.true;
-  });
-
-
-  it ('should have the sort Banner and card starts and ends at same point vertically', async function() {
-    name.sendKeys('Spicejet');
-    origin.sendKeys('Bangalore');
-    destination.sendKeys('Delhi');
-    price.sendKeys('1000');
-    rating.sendKeys('4');
-    await addBtn.click();
-    const hasSameDistance = await driver.executeScript(`return ((document.querySelectorAll(".sort")[0].offsetLeft === document.querySelectorAll(".card")[0].offsetLeft) && (document.querySelectorAll(".card")[0].offsetWidth === document.querySelectorAll(".sort")[0].offsetWidth))`);
-    expect(hasSameDistance).to.be.true;
   });
 
 });

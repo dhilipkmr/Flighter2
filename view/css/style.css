@@ -49,6 +49,13 @@ input:focus {
   width: 75%;
   margin-left: 21%;
 }
+.dn {
+  display: none;
+}
+
+.error {
+  color: red;
+}
 .sort {
   display: flex;
   width: 90%;
